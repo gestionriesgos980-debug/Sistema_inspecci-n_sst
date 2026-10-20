@@ -852,6 +852,7 @@ function toggleInfoCard(card){card.classList.toggle('active')}
 function toggleModelCard(card){card.classList.toggle('active')}
 function activateCategory(category){$('#cat').value=category;go('new');renderAspects();step(2);}
 function wireCardInteractions(){
+  // Tarjetas métricas: clic y teclado comparten exactamente la misma acción.
   $$('.metric-card').forEach(c=>{
     const act=()=>{
       const m=c.dataset.metric;
@@ -861,6 +862,20 @@ function wireCardInteractions(){
     };
     c.onclick=act;
     c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act();}};
+  });
+  // Tarjetas informativas: despliegan su explicación sin bloquear los botones internos.
+  $$('.info-card').forEach(c=>{
+    const toggle=e=>{
+      if(e && e.target.closest('button,a,input,select,textarea')) return;
+      toggleInfoCard(c);
+    };
+    c.onclick=toggle;
+    c.onkeydown=e=>{if((e.key==='Enter'||e.key===' ') && e.target===c){e.preventDefault();toggleInfoCard(c);}};
+  });
+  // Tarjetas del modelo: accesibles con ratón o teclado.
+  $$('.model-card').forEach(c=>{
+    c.onclick=()=>toggleModelCard(c);
+    c.onkeydown=e=>{if((e.key==='Enter'||e.key===' ') && e.target===c){e.preventDefault();toggleModelCard(c);}};
   });
 }
 
